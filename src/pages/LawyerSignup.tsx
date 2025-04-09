@@ -61,9 +61,9 @@ const LawyerSignup = () => {
         const { data, error } = await supabase.storage
           .from('lawyer-photos')
           .upload(`${Date.now()}-${photoFile.name}`, photoFile);
-
         if (error) throw error;
-        photoUrl = data.path;
+      
+        photoUrl = `${import.meta.env.VITE_PUBLIC_URL}${data.path}`;
       }
 
       const { error } = await supabase.from('lawyers').insert({
