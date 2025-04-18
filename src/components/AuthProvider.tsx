@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, barLicenceNumber?: string, phoneNumber?: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -32,12 +32,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    if (error) throw error;
+  const signUp = async (email: string, password: string, barLicenceNumber?: string, phoneNumber?: string) => {
+    try {
+      const { data: signUpData, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) throw error;
+      const user = signUpData?.user;
+
+      if (user && (barLicenceNumber || phoneNumber)) {
+        const { data: lawyer, error: fetchError } = await supabase
+          .from('lawyers')
+          .select('id')
+          .or(`bar_license_no.eq.${barLicenceNumber},mobile_no.eq.${phoneNumber}`)
+          .maybeSingle();
+
+
+        if (fetchError) throw fetchError;
+
+        if (lawyer) {
+          const { error: updateError } = await supabase
+            .from('lawyers')
+            .update({ user_id: user.id })
+            .eq('id', lawyer.id);
+
+          if (updateError) throw updateError;
+        }
+      }
+    } catch (err: any) {
+      throw err; // Pass error back to component using the hook
+    } finally {
+      setLoading(false);
+    }
+
   };
 
   const signIn = async (email: string, password: string) => {

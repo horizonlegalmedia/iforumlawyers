@@ -81,16 +81,12 @@ const Directory = () => {
         .select('*')
         .eq('approved', "true")
        .order('name');
-
-        // console.log("data is ",data)
       if (supabaseError) throw supabaseError;
       
       // Use dummy data if no data from Supabase
       setLawyers(data?.length ? data : dummyLawyers);
       setError(null);
-    } catch (error) {
-      console.error('Error fetching lawyers:', error);
-      
+    } catch (error) { 
       if (retryCount < MAX_RETRIES) {
         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
         return fetchLawyersWithRetry(retryCount + 1);
@@ -237,6 +233,7 @@ const Directory = () => {
                       src={lawyer.photo_url || 'https://images.unsplash.com/photo-1505664194779-8beaceb93744?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=500&w=500&q=80'}
                       alt={lawyer.name}
                       className="w-full h-full object-cover object-center"
+                      loading='lazy'
                     />
                     {lawyer.rating && (
                       <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full shadow-md">

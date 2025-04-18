@@ -5,6 +5,8 @@ import { useAuth } from '../components/AuthProvider';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [barLicenceNumber, setBarLicenceNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,7 +20,7 @@ const Login = () => {
 
     try {
       if (isSignUp) {
-        await signUp(email, password);
+        await signUp(email, password, barLicenceNumber,phoneNumber);
         // After signup, automatically sign them in
         await signIn(email, password);
       } else {
@@ -65,7 +67,7 @@ const Login = () => {
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password 
+                Password
               </label>
               <input
                 id="password"
@@ -79,6 +81,59 @@ const Login = () => {
                 placeholder="Password (atleast 6 characters required)"
               />
             </div>
+            {
+              isSignUp ?
+                (
+                  <div>
+                    <label htmlFor="bar-licence-no" className="sr-only">
+                      Bar Licence Number
+                    </label>
+                    <input
+                      id="bar-licence-no"
+                      name="barLicenceNumber"
+                      type="text"
+                      autoComplete="off"
+                      pattern="^[A-Z]{2}\d{1,6}/\d{4}$"
+                      title="Format: UP1234/2018"
+                      required
+                      value={barLicenceNumber}
+                      onChange={(e) => setBarLicenceNumber(e.target.value)}
+                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                      placeholder="Bar Licence Number"
+                    />
+                  </div>
+                ) : ""
+            }
+
+            {
+              isSignUp ?
+                (
+                  <div>
+                    <label htmlFor="phone-number" className="sr-only">
+                      Phone Number
+                    </label>
+                    <div className="flex">
+                      <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-100 text-gray-500 text-sm">
+                        +91
+                      </span>
+                      <input
+                        id="phone-number"
+                        name="phoneNumber"
+                        type="tel"
+                        autoComplete="tel"
+                        pattern="^[6-9]\d{9}$"
+                        title="Enter a valid 10-digit Indian phone number"
+                        required
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="appearance-none rounded-r-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                        placeholder="Enter Phone Number"
+                      />
+                    </div>
+                  </div>
+                ) : ""
+            }
+
           </div>
 
           <div className="flex flex-col space-y-4">
@@ -89,7 +144,7 @@ const Login = () => {
             >
               {loading ? (isSignUp ? 'Creating account...' : 'Signing in...') : (isSignUp ? 'Create account' : 'Sign in')}
             </button>
-            
+
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}

@@ -71,7 +71,7 @@ const LawyerSignup = () => {
         name: formData.get('name'),
         photo_url: photoUrl,
         age: parseInt(formData.get('age') as string),
-        bar_license_no: formData.get('barLicenseNo') || null,
+        bar_license_no: formData.get('barLicenseNo'),
         bar_association: formData.get('barAssociation'),
         years_of_practice: parseInt(formData.get('yearsPractice') as string),
         specializations: selectedSpecs,
@@ -144,8 +144,7 @@ const LawyerSignup = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Bar License No.
-              <span className="text-gray-500 text-sm font-normal ml-1">(optional)</span>
+              Bar License No. *
             </label>
             <input
               type="text"
